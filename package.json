@@ -1,0 +1,33 @@
+{
+  "name": "val-town-playground",
+  "type": "module",
+  "version": "0.0.1",
+  "author": "Achille Lacoin",
+  "description": "A playground component for Val Town",
+  "main": "lib/main.js",
+  "scripts": {
+    "format": "prettier --write \"src/**/*.ts\"",
+    "clean": "rimraf --glob \"./*.css\" bundle.js",
+    "build:ts": "tsc",
+    "build:js": "esbuild --format=esm --bundle --loader:.css=copy --outfile=bundle.js src/main.ts",
+    "build:css": "postcss -r \"./*.css\"",
+    "build": "npm run clean && npm run build:js && npm run build:css",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@codemirror/lang-javascript": "^6.2.2",
+    "@lit/react": "^1.0.3",
+    "codemirror": "^6.0.1",
+    "lit": "^3.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.4",
+    "postcss": "^8.4.31",
+    "postcss-cli": "^11.0.0",
+    "prettier": "^3.0.3",
+    "rimraf": "^5.0.5",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^5.2.2"
+  }
+}
