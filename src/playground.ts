@@ -25,7 +25,7 @@ import {basicSetup, EditorView} from 'codemirror';
 import {javascript} from '@codemirror/lang-javascript';
 
 const API_URL = 'https://api.val.town';
-const SANDBOX_URL = 'https://esm.town/v/easrng/playground?v=383';
+const SANDBOX_URL = 'https://esm.town/v/pomdtr/playground';
 
 type EvalResponse = {
   json: {
