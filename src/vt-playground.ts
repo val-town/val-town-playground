@@ -94,11 +94,11 @@ export class Playground extends LitElement {
   @property({type: String})
   val = '';
 
+  @state()
+  logs: LogType[] = [];
+
   editorRef = createRef();
   view: EditorView | undefined;
-
-  @property({attribute: false})
-  logs: LogType[] = [];
 
   override async firstUpdated() {
     let initialText =
