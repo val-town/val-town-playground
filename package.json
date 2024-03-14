@@ -15,9 +15,9 @@
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\"",
     "clean": "rimraf dist/* lib/*",
-    "build:ts": "tsc",
+    "build:ts": "tsc && cp src/*.css lib/",
     "build:js": "esbuild --format=esm --bundle --loader:.css=copy --outfile=dist/vt-playground.js src/main.ts",
-    "build:css": "postcss -r \"./dist/*.css\"",
+    "build:css": "postcss -r \"./dist/*.css\" \"./lib/*.css\"",
     "build": "npm run clean && npm run build:ts && npm run build:js && npm run build:css",
     "test": "echo \"Error: no test specified\" && exit 1",
     "release": "npm run build && npm publish"
