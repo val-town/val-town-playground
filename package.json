@@ -1,5 +1,5 @@
 {
-  "name": "val-town-playground",
+  "name": "vt-playground",
   "type": "module",
   "version": "0.0.1",
   "author": "Achille Lacoin",
@@ -12,12 +12,17 @@
     "build:js": "esbuild --format=esm --bundle --loader:.css=copy --outfile=dist/playground.js src/main.ts",
     "build:css": "postcss -r \"./dist/*.css\"",
     "build": "npm run clean && npm run build:js && npm run build:css",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "release": "npm run build && npm publish"
   },
   "license": "MIT",
+  "files": [
+    "sandbox.ts",
+    "dist",
+    "lib"
+  ],
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.2",
-    "@lit/react": "^1.0.3",
     "codemirror": "^6.0.1",
     "lit": "^3.1.0",
     "stringify-object": "^5.0.0"

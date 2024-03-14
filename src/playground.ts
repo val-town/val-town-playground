@@ -1,5 +1,6 @@
 import {LitElement, html, nothing} from 'lit';
 import styles from './playground.css' assert {type: 'css'};
+import manifest from '../package.json' assert {type: 'json'};
 import {customElement, property, state} from 'lit/decorators.js';
 import {createRef, ref} from 'lit/directives/ref.js';
 import {classMap} from 'lit/directives/class-map.js';
@@ -9,7 +10,7 @@ import {javascript} from '@codemirror/lang-javascript';
 import stringifyObject from 'stringify-object';
 
 const API_URL = 'https://api.val.town';
-const SANDBOX_URL = 'https://esm.town/v/pomdtr/playground';
+const SANDBOX_URL = `https://cdn.jsdelivr.net/npm/vt-playground@${manifest.version}/sandbox.ts`;
 
 type LogType = {
   level: string;
@@ -101,7 +102,7 @@ export class Playground extends LitElement {
 
   override async firstUpdated() {
     let initialText =
-      'import {capitalize} from "npm:lodash-es"\n\nconsole.log(capitalize("hello from val town!"))';
+      'import {capitalize} from "npm:lodash-es"\n\nconsole.log(capitalize("hello from val"))';
     if (this.val) {
       const resp = await fetch(`https://api.val.town/v1/alias/${this.val}`);
       if (!resp.ok) {
