@@ -1,5 +1,5 @@
 import {LitElement, html, nothing} from 'lit';
-import styles from './playground.css' assert {type: 'css'};
+import styles from './styles.css' assert {type: 'css'};
 import manifest from '../package.json' assert {type: 'json'};
 import {customElement, property, state} from 'lit/decorators.js';
 import {createRef, ref} from 'lit/directives/ref.js';
@@ -111,7 +111,8 @@ export class Playground extends LitElement {
       const {code} = await resp.json();
       initialText = code;
     } else if (this.textContent) {
-      initialText = this.textContent.trim();
+      console.log('textContent', this.textContent);
+      initialText = trimLeadingWS(this.textContent);
     }
 
     this.view = new EditorView({
@@ -290,4 +291,25 @@ export function logPretty(...args: unknown[]) {
     }),
     html`<br />`
   );
+}
+
+function trimLeadingWS(code: string) {
+  /*
+    Get the initial indentation
+    But ignore new line characters
+  */
+  var matcher = /^[\r\n]+(\s+)/m;
+  const match = code.match(matcher);
+  if (match) {
+    console.log('matching');
+    /*
+      Replace the initial whitespace
+      globally and over multiple lines
+    */
+    return code.trim().replace(new RegExp('^' + match[1], 'gm'), '');
+  }
+
+  console.log('not matching');
+  // Regex doesn't match so return the original string
+  return code.trim();
 }

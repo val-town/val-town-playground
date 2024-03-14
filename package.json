@@ -9,7 +9,7 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "clean": "rimraf --glob \"./*.css\" bundle.js",
     "build:ts": "tsc",
-    "build:js": "esbuild --format=esm --bundle --loader:.css=copy --outfile=dist/playground.js src/main.ts",
+    "build:js": "esbuild --format=esm --bundle --loader:.css=copy --outfile=dist/vt-playground.js src/main.ts",
     "build:css": "postcss -r \"./dist/*.css\"",
     "build": "npm run clean && npm run build:js && npm run build:css",
     "test": "echo \"Error: no test specified\" && exit 1",

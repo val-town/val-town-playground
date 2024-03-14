@@ -1,7 +1,19 @@
 <!doctype html>
 <html>
+  <head>
+    <title>vt-playground</title>
+    <style>
+      :not(:defined) {
+        visibility: hidden;
+      }
+    </style>
+    <script type="module" src="dist/vt-playground.js"></script>
+  </head>
   <body>
-    <vt-playground></vt-playground>
-    <script type="module" src="dist/playground.js"></script>
+    <vt-playground>
+      console.log('Hello, World!');
+      console.error('This is an error!');
+      console.warn('This is a warning!');
+    </vt-playground>
   </body>
 </html>
