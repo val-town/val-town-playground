@@ -9,8 +9,8 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "clean": "rimraf --glob \"./*.css\" bundle.js",
     "build:ts": "tsc",
-    "build:js": "esbuild --format=esm --bundle --loader:.css=copy --outfile=bundle.js src/main.ts",
-    "build:css": "postcss -r \"./*.css\"",
+    "build:js": "esbuild --format=esm --bundle --loader:.css=copy --outfile=dist/playground.js src/main.ts",
+    "build:css": "postcss -r \"./dist/*.css\"",
     "build": "npm run clean && npm run build:js && npm run build:css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,9 +19,11 @@
     "@codemirror/lang-javascript": "^6.2.2",
     "@lit/react": "^1.0.3",
     "codemirror": "^6.0.1",
-    "lit": "^3.1.0"
+    "lit": "^3.1.0",
+    "stringify-object": "^5.0.0"
   },
   "devDependencies": {
+    "@types/stringify-object": "^4.0.5",
     "esbuild": "^0.19.4",
     "postcss": "^8.4.31",
     "postcss-cli": "^11.0.0",

@@ -3,21 +3,49 @@ import styles from './playground.css' assert {type: 'css'};
 import {customElement, property, state} from 'lit/decorators.js';
 import {createRef, ref} from 'lit/directives/ref.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {join} from 'lit/directives/join.js';
 import {basicSetup, EditorView} from 'codemirror';
 import {javascript} from '@codemirror/lang-javascript';
+import stringifyObject from 'stringify-object';
 
 const API_URL = 'https://api.val.town';
 const SANDBOX_URL = 'https://esm.town/v/pomdtr/playground';
 
-type EvalResponse = {
-  json: {
-    logs: LogType[];
-  };
+type LogType = {
+  level: string;
+  args: unknown[];
 };
 
+type EvalResponse = {
+  json:
+    | {
+        ok: true;
+        logs: LogType[];
+      }
+    | {
+        ok: false;
+        error: string;
+      };
+};
+
+const playIcon = html`<svg
+  xmlns="http://www.w3.org/2000/svg"
+  fill="none"
+  viewBox="0 0 24 24"
+  stroke-width="1.5"
+  stroke="currentColor"
+  aria-hidden="true"
+  class="h-4 w-4"
+>
+  <path
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"
+  ></path>
+</svg>`;
+
 const valtownLogo = html`<svg
-  width="100"
-  height="35"
+  class="h-8"
   viewBox="0 0 600 237"
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
@@ -58,13 +86,6 @@ const valtownLogo = html`<svg
   </defs>
 </svg> `;
 
-type LogType = {
-  type: string;
-  args: unknown[];
-  time: number;
-  stack: string;
-};
-
 @customElement('vt-playground')
 export class Playground extends LitElement {
   static override styles = [styles];
@@ -79,7 +100,8 @@ export class Playground extends LitElement {
   logs: LogType[] = [];
 
   override async firstUpdated() {
-    let initialText = 'console.log("Hello, World!")';
+    let initialText =
+      'import {capitalize} from "npm:lodash-es"\n\nconsole.log(capitalize("hello from val town!"))';
     if (this.val) {
       const resp = await fetch(`https://api.val.town/v1/alias/${this.val}`);
       if (!resp.ok) {
@@ -105,7 +127,6 @@ export class Playground extends LitElement {
   async run() {
     this.logs = [];
     this.requestUpdate();
-    console.log('Running code:', this.code);
     const resp = await fetch(API_URL + '/v1/eval', {
       method: 'POST',
       body: JSON.stringify({
@@ -116,7 +137,16 @@ export class Playground extends LitElement {
       })
     });
     const res = (await resp.json()) as EvalResponse;
-    this.logs = res.json.logs;
+    if (res.json.ok) {
+      this.logs = res.json.logs;
+    } else {
+      this.logs = [
+        {
+          level: 'error',
+          args: [res.json.error]
+        }
+      ];
+    }
     // Why do we need to call requestUpdate here?
     this.requestUpdate();
   }
@@ -135,11 +165,13 @@ export class Playground extends LitElement {
           class="text-gray-600 flex w-full select-none flex-row justify-between gap-x-1 space-y-0 px-2 py-1"
         >
           <div class="flex items-center justify-start gap-x-1">
-            ${valtownLogo}
+            <a href="https://val.town" target="_blank">${valtownLogo}</a>
           </div>
-          <div>
+          <div class="flex gap-x-1">
             <vt-button @click=${() => this.save()}>Save</vt-button>
-            <vt-button primary @click=${() => this.run()}>Run</vt-button>
+            <vt-button primary @click=${() => this.run()}
+              >${playIcon} Run</vt-button
+            >
           </div>
         </div>
         <div class="relative" ${ref(this.editorRef)}></div>
@@ -191,12 +223,14 @@ export class Log extends LitElement {
     return html`<details
       ${this.open ? 'open' : ''}
       class="
-    group bg-white
-          relative
-            hover:bg-blue-50
-            open:bg-blue-50
-            open:shadow-md
-            open:shadow-blue-100"
+    group relative ${classMap({
+        'bg-white hover:bg-blue-50 open:bg-blue-50':
+          this.log?.level !== 'error' && this.log?.level !== 'warn',
+        'bg-red-100 hover:bg-red-200 open:bg-red-200':
+          this.log?.level === 'error',
+        'bg-yellow-100 hover:bg-yellow-200 open:bg-yellow-200':
+          this.log?.level === 'warn'
+      })}"
     >
       <summary
         class="
@@ -206,10 +240,8 @@ export class Log extends LitElement {
             font-mono
             text-xs
             transition-colors
-            group-open:from-blue-100
-            group-open:to-blue-50
-            group-open:bg-gradient-to-b"
-        style="grid-template-columns: 20px minmax(0px, 1fr) 40px;"
+            "
+        style="grid-template-columns: 20px minmax(0px, 1fr)"
       >
         <div class="p-0.5">
           <svg
@@ -227,12 +259,36 @@ export class Log extends LitElement {
             ></path>
           </svg>
         </div>
-        <div class="truncate">${this.log?.args
-          .map((arg) => `${arg}`)
-          .join(' ')}</div>
-        <div class="flex justify-end"><div class="truncate text-gray-500">${this
-          .log?.type}<div></div>
+        <div class="truncate">${log(...(this.log?.args || []))}</div>
       </summary>
+      <div>
+        <div class="py-2 px-5 font-mono text-xs">
+          ${logPretty(...(this.log?.args || []))}
+        </div>
+      </div>
     </details>`;
   }
+}
+
+export function log(...args: unknown[]) {
+  return args
+    .map((arg) => {
+      if (typeof arg === 'string') {
+        return arg;
+      }
+      return stringifyObject(arg);
+    })
+    .join(' ');
+}
+
+export function logPretty(...args: unknown[]) {
+  return join(
+    args.map((arg) => {
+      if (typeof arg === 'string') {
+        return arg;
+      }
+      return stringifyObject(arg, {indent: '  '});
+    }),
+    html`<br />`
+  );
 }

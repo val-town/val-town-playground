@@ -3,3 +3,4 @@
 /*.css
 /bundle.js
 *.swp
+/dist/*
