@@ -2,7 +2,10 @@
 @tailwind utilities;
 
 @layer base {
-    html {
-        font-family: IBM Plex Sans, -apple-system, sans-serif
-    }
+  html {
+    font-family:
+      IBM Plex Sans,
+      -apple-system,
+      sans-serif;
+  }
 }

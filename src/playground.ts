@@ -159,11 +159,11 @@ export class Playground extends LitElement {
 
   override render() {
     return html`<div
-      class="rounded group bg-white border-gray-300 overflow-hidden border shadow-sm ring-4 ring-sky-500/0 transition-colors [&:has(.cm-focused)]:border-gray-400 [&:has(.cm-focused)]:ring-sky-500/10"
+      class="group overflow-hidden rounded border border-gray-300 bg-white shadow-sm ring-4 ring-sky-500/0 transition-colors [&:has(.cm-focused)]:border-gray-400 [&:has(.cm-focused)]:ring-sky-500/10"
     >
       <div class="divide-y divide-gray-300">
         <div
-          class="text-gray-600 flex w-full select-none flex-row justify-between gap-x-1 space-y-0 px-2 py-1"
+          class="flex w-full select-none flex-row justify-between gap-x-1 space-y-0 px-2 py-1 text-gray-600"
         >
           <div class="flex items-center justify-start gap-x-1">
             <a href="https://val.town" target="_blank">${valtownLogo}</a>
@@ -195,14 +195,12 @@ export class Header extends LitElement {
   render() {
     return html`
       <button
-        class="inline-flex items-center border justify-center gap-x-1 rounded whitespace-nowrap enabled:cursor-pointer disabled:cursor-not-allowed select-none font-regular h-min outline-0 focus-visible:ring-1 focus-visible:ring-offset-1 transition-colors transition-shadow group disabled:text-gray-400 focus-visible:ring-blue-500 p-1.5 ${classMap(
-          {
-            'text-white bg-blue-500 border-blue-500 hover:bg-blue-600 hover:border-blue-600':
-              this.primary,
-            'text-gray-500 bg-white border-gray-300 hover:bg-gray-50 hover:border-gray-400':
-              !this.primary
-          }
-        )}"
+        class="font-regular ${classMap({
+          'text-white bg-blue-500 border-blue-500 hover:bg-blue-600 hover:border-blue-600':
+            this.primary,
+          'text-gray-500 bg-white border-gray-300 hover:bg-gray-50 hover:border-gray-400':
+            !this.primary
+        })} group inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border p-1.5 outline-0 transition-colors transition-shadow focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer disabled:cursor-not-allowed disabled:text-gray-400"
       >
         <slot></slot>
       </button>
@@ -224,14 +222,14 @@ export class Log extends LitElement {
     return html`<details
       ${this.open ? 'open' : ''}
       class="
-    group relative ${classMap({
+    ${classMap({
         'bg-white hover:bg-blue-50 open:bg-blue-50':
           this.log?.level !== 'error' && this.log?.level !== 'warn',
         'bg-red-100 hover:bg-red-200 open:bg-red-200':
           this.log?.level === 'error',
         'bg-yellow-100 hover:bg-yellow-200 open:bg-yellow-200':
           this.log?.level === 'warn'
-      })}"
+      })} group relative"
     >
       <summary
         class="
@@ -251,7 +249,7 @@ export class Log extends LitElement {
             @click=${() => (this.open = !this.open)}
             fill="currentColor"
             aria-hidden="true"
-            class="text-blue-500 w-3 transition-transform group-open:rotate-90"
+            class="w-3 text-blue-500 transition-transform group-open:rotate-90"
           >
             <path
               fill-rule="evenodd"
@@ -263,7 +261,7 @@ export class Log extends LitElement {
         <div class="truncate">${log(...(this.log?.args || []))}</div>
       </summary>
       <div>
-        <div class="py-2 px-5 font-mono text-xs">
+        <div class="px-5 py-2 font-mono text-xs">
           ${logPretty(...(this.log?.args || []))}
         </div>
       </div>
