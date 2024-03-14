@@ -6,7 +6,7 @@ import {createRef, ref} from 'lit/directives/ref.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {join} from 'lit/directives/join.js';
 import {basicSetup, EditorView} from 'codemirror';
-import {javascript} from '@codemirror/lang-javascript';
+import {tsxLanguage} from '@codemirror/lang-javascript';
 import stringifyObject from 'stringify-object';
 
 const API_URL = 'https://api.val.town';
@@ -132,14 +132,7 @@ export class Playground extends LitElement {
 
     this.view = new EditorView({
       doc: initialText,
-      extensions: [
-        basicSetup,
-        javascript({
-          jsx: true,
-          typescript: true
-        }),
-        updateListener
-      ],
+      extensions: [basicSetup, tsxLanguage.extension, updateListener],
       parent: this.editorRef.value!
     });
   }
