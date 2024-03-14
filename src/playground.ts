@@ -138,6 +138,7 @@ export class Playground extends LitElement {
       })
     });
     const res = (await resp.json()) as EvalResponse;
+    console.log(res);
     if (res.json.ok) {
       this.logs = res.json.logs;
     } else {
@@ -157,7 +158,6 @@ export class Playground extends LitElement {
   }
 
   override render() {
-    console.log('rendering');
     return html`<div
       class="rounded group bg-white border-gray-300 overflow-hidden border shadow-sm ring-4 ring-sky-500/0 transition-colors [&:has(.cm-focused)]:border-gray-400 [&:has(.cm-focused)]:ring-sky-500/10"
     >

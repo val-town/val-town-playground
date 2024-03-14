@@ -1,16 +1,16 @@
 // @ts-nocheck
-// this is used on val.town, not from the web component
+// (c) easrng 2024 all rights reserved
 
 import * as SuperJSON from 'npm:superjson@2.2.1';
 
 type Log = {
-  type: string;
+  level: string;
   args: unknown[];
-  time: number;
-  stack: string;
 };
 
-async function execute(code: string): Promise<{logs: Log[]}> {
+async function execute(
+  code: string
+): Promise<{ok: true; logs: Log[]} | {ok: false; error: string}> {
   try {
     const blob = new Blob([code], {
       type: 'text/tsx'
@@ -36,10 +36,8 @@ async function execute(code: string): Promise<{logs: Log[]}> {
         if (typeof real === 'function' && typeof key === 'string') {
           const fn = function (...args: any[]) {
             logs.push({
-              type: key,
-              args,
-              time: Date.now(),
-              stack: cleanStack(new Error().stack)
+              level: key,
+              args
             });
             return real.call(this, ...args);
           };
@@ -56,10 +54,8 @@ async function execute(code: string): Promise<{logs: Log[]}> {
         await import(url);
       } catch (e) {
         logs.push({
-          type: 'error',
-          args: [e],
-          time: Date.now(),
-          stack: cleanStack(e.stack)
+          level: 'error',
+          args: [e.message]
         });
       }
     }
@@ -70,18 +66,13 @@ async function execute(code: string): Promise<{logs: Log[]}> {
     await run();
     URL.revokeObjectURL(url);
     return {
+      ok: true,
       logs
     };
   } catch (error) {
     return {
-      logs: [
-        {
-          type: 'error',
-          args: [error],
-          time: Date.now(),
-          stack: new Error().stack.replace(/^.+\n/, '')
-        }
-      ]
+      ok: false,
+      error: error.message
     };
   }
 }
