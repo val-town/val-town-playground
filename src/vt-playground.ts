@@ -94,6 +94,9 @@ export class Playground extends LitElement {
   @property({type: String})
   val = '';
 
+  @property({type: String})
+  code = '';
+
   @state()
   logs: LogType[] = [];
 
@@ -103,27 +106,42 @@ export class Playground extends LitElement {
   override async firstUpdated() {
     let initialText =
       'import {capitalize} from "npm:lodash-es"\n\nconsole.log(capitalize("hello from val"))';
+
     if (this.val) {
       const resp = await fetch(`https://api.val.town/v1/alias/${this.val}`);
       if (!resp.ok) {
         initialText = `// Error: ${resp.status} ${resp.statusText}`;
       }
       const {code} = await resp.json();
+      this.code = code;
       initialText = code;
-    } else if (this.textContent) {
-      console.log('textContent', this.textContent);
-      initialText = trimLeadingWS(this.textContent);
+    } else if (this.code) {
+      initialText = this.code;
     }
+
+    const updateListener = EditorView.updateListener.of((update) => {
+      if (!update.docChanged) {
+        return;
+      }
+
+      this.code = update.view.state.doc.toString();
+      this.dispatchEvent(
+        new CustomEvent('code-change', {detail: {code: this.code}})
+      );
+    });
 
     this.view = new EditorView({
       doc: initialText,
-      extensions: [basicSetup, javascript()],
+      extensions: [
+        basicSetup,
+        javascript({
+          jsx: true,
+          typescript: true
+        }),
+        updateListener
+      ],
       parent: this.editorRef.value!
     });
-  }
-
-  get code() {
-    return this.view?.state.doc.toString() || '';
   }
 
   async run() {
@@ -139,7 +157,6 @@ export class Playground extends LitElement {
       })
     });
     const res = (await resp.json()) as EvalResponse;
-    console.log(res);
     if (res.json.ok) {
       this.logs = res.json.logs;
     } else {
@@ -291,25 +308,4 @@ export function logPretty(...args: unknown[]) {
     }),
     html`<br />`
   );
-}
-
-function trimLeadingWS(code: string) {
-  /*
-    Get the initial indentation
-    But ignore new line characters
-  */
-  var matcher = /^[\r\n]+(\s+)/m;
-  const match = code.match(matcher);
-  if (match) {
-    console.log('matching');
-    /*
-      Replace the initial whitespace
-      globally and over multiple lines
-    */
-    return code.trim().replace(new RegExp('^' + match[1], 'gm'), '');
-  }
-
-  console.log('not matching');
-  // Regex doesn't match so return the original string
-  return code.trim();
 }
