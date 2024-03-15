@@ -1,4 +1,4 @@
-import {LitElement, html, nothing} from 'lit';
+import {LitElement, css, html, nothing} from 'lit';
 import styles from '../build/styles.css' assert {type: 'css'};
 import manifest from '../package.json' assert {type: 'json'};
 import {customElement, property, state} from 'lit/decorators.js';
@@ -89,7 +89,19 @@ const valtownLogo = html`<svg
 
 @customElement('vt-playground')
 export class Playground extends LitElement {
-  static override styles = [styles];
+  static override styles = [
+    styles,
+    css`
+      :host {
+        display: block;
+      }
+
+      .cm-editor {
+        max-height: 80vh;
+        background-color: rgb(249 250 251);
+      }
+    `
+  ];
 
   @property({type: String})
   val = '';
@@ -104,19 +116,16 @@ export class Playground extends LitElement {
   view: EditorView | undefined;
 
   override async firstUpdated() {
-    let initialText =
-      'import {capitalize} from "npm:lodash-es"\n\nconsole.log(capitalize("hello from val"))';
-
     if (this.val) {
       const resp = await fetch(`https://api.val.town/v1/alias/${this.val}`);
       if (!resp.ok) {
-        initialText = `// Error: ${resp.status} ${resp.statusText}`;
+        this.code = `// Error: ${resp.status} ${resp.statusText}`;
       }
       const {code} = await resp.json();
       this.code = code;
-      initialText = code;
-    } else if (this.code) {
-      initialText = this.code;
+    } else if (!this.code) {
+      this.code =
+        'import {capitalize} from "npm:lodash-es"\n\nconsole.log(capitalize("hello from val"))';
     }
 
     const updateListener = EditorView.updateListener.of((update) => {
@@ -131,7 +140,7 @@ export class Playground extends LitElement {
     });
 
     this.view = new EditorView({
-      doc: initialText,
+      doc: this.code,
       extensions: [basicSetup, tsxLanguage.extension, updateListener],
       parent: this.editorRef.value!
     });
@@ -170,20 +179,28 @@ export class Playground extends LitElement {
 
   override render() {
     return html`<div
-      class="group overflow-hidden rounded border border-gray-300 bg-white shadow-sm ring-4 ring-sky-500/0 transition-colors [&:has(.cm-focused)]:border-gray-400 [&:has(.cm-focused)]:ring-sky-500/10"
+      class="transition-color group bg-white border-gray-300 overflow-hidden rounded border shadow-sm ring-4 ring-sky-500/0 [&:has(.cm-focused)]:border-gray-400 [&:has(.cm-focused)]:ring-sky-500/10"
     >
       <div class="divide-y divide-gray-300">
         <div
-          class="flex w-full select-none flex-row justify-between gap-x-1 space-y-0 px-2 py-1 text-gray-600"
+          class="text-gray-600 flex w-full select-none flex-row justify-between gap-x-1 space-y-0 px-2 py-1"
         >
           <div class="flex items-center justify-start gap-x-1">
             <a href="https://val.town" target="_blank">${valtownLogo}</a>
           </div>
-          <div class="flex gap-x-1">
-            <vt-button @click=${() => this.save()}>Save</vt-button>
-            <vt-button primary @click=${() => this.run()}
-              >${playIcon} Run</vt-button
+          <div class="flex gap-x-1 py-1">
+            <button
+              class="group bg-white text-gray-500 border-gray-300 inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border p-1.5 outline-0 transition-shadow hover:bg-gray-50 hover:border-gray-400 disabled:text-gray-400 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer"
+              @click=${() => this.save()}
             >
+              Save
+            </button>
+            <button
+              class="group text-white bg-blue-500 border-blue-500 inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border p-1.5 outline-0 transition-shadow hover:bg-blue-600 hover:border-blue-600 disabled:text-gray-400 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer"
+              @click=${() => this.run()}
+            >
+              ${playIcon} Run
+            </button>
           </div>
         </div>
         <div class="relative" ${ref(this.editorRef)}></div>
@@ -194,28 +211,6 @@ export class Playground extends LitElement {
           : nothing}
       </div>
     </div>`;
-  }
-}
-
-@customElement('vt-button')
-export class Header extends LitElement {
-  static override styles = [styles];
-  @property({type: Boolean})
-  primary = false;
-
-  render() {
-    return html`
-      <button
-        class="font-regular ${classMap({
-          'text-white bg-blue-500 border-blue-500 hover:bg-blue-600 hover:border-blue-600':
-            this.primary,
-          'text-gray-500 bg-white border-gray-300 hover:bg-gray-50 hover:border-gray-400':
-            !this.primary
-        })} group inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border p-1.5 outline-0 transition-colors transition-shadow focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer disabled:cursor-not-allowed disabled:text-gray-400"
-      >
-        <slot></slot>
-      </button>
-    `;
   }
 }
 
@@ -260,7 +255,7 @@ export class Log extends LitElement {
             @click=${() => (this.open = !this.open)}
             fill="currentColor"
             aria-hidden="true"
-            class="w-3 text-blue-500 transition-transform group-open:rotate-90"
+            class="text-blue-500 w-3 transition-transform group-open:rotate-90"
           >
             <path
               fill-rule="evenodd"
