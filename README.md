@@ -6,14 +6,26 @@ Embed a val.town playground in your website.
 
 ## Usage
 
-### Web Component
+```html
+<!doctype html>
+<html>
+  <head>
+    <title>vt-playground</title>
+    <script type="module" src="dist/vt-playground.js"></script>
+  </head>
+  <body>
+    <vt-playground id="playground" code="console.log('hello world')"></vt-playground>
+  </body>
+</html>
+```
 
-TODO
+## API
 
-### React Component
+### Attributes
 
-TODO
+- `code`: The code to be executed in the playground. The value of this attribute will be updated when the code changes in the playground.
+- `val`: A val to load in the playground.
 
-### Iframe
+### Events
 
-TODO
+- `code-change`: Fired when the code changes. The event detail contains the new code.
