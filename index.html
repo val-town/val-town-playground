@@ -10,14 +10,10 @@
     <script type="module" src="dist/vt-playground.js"></script>
   </head>
   <body>
-    <vt-playground id="playground"></vt-playground>
-    <script>
-      const playground = document.getElementById('playground');
-      playground.code = `
-<template>
-  <h1>Hello, world!</h1>
-</template>
-`.trimStart();
-    </script>
+    <vt-playground
+      id="playground"
+      code="console.log('Hello World!')"
+    ></vt-playground>
+    <script></script>
   </body>
 </html>

@@ -4,22 +4,12 @@
   "version": "0.0.8",
   "author": "Achille Lacoin",
   "description": "A playground component for Val Town",
-  "exports": {
-    ".": {
-      "import": "./lib/main.js"
-    },
-    "./react": {
-      "import": "./lib/react.js"
-    }
-  },
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\"",
-    "clean": "rimraf dist/* lib/*",
-    "build:ts": "tsc && cp src/*.css lib/",
-    "build:js": "esbuild --format=esm --bundle --loader:.css=copy --outfile=dist/vt-playground.js src/main.ts",
-    "build:css": "postcss -r \"./dist/*.css\" \"./lib/*.css\"",
-    "build": "npm run clean && npm run build:ts && npm run build:js && npm run build:css",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rimraf dist/*",
+    "build:css": "tailwindcss -i src/base.css -o src/styles.css",
+    "build:js": "node build.js",
+    "build": "npm run clean && npm run build:css && npm run build:js",
     "release": "npm run build && npm publish"
   },
   "license": "MIT",
@@ -38,8 +28,7 @@
   "devDependencies": {
     "@types/stringify-object": "^4.0.5",
     "esbuild": "^0.19.4",
-    "postcss": "^8.4.31",
-    "postcss-cli": "^11.0.0",
+    "esbuild-plugin-lit-css": "^2.1.0",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.12",
     "rimraf": "^5.0.5",
