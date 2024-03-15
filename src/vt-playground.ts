@@ -1,5 +1,5 @@
 import {LitElement, html, nothing} from 'lit';
-import styles from './styles.css' assert {type: 'css'};
+import styles from '../build/styles.css' assert {type: 'css'};
 import manifest from '../package.json' assert {type: 'json'};
 import {customElement, property, state} from 'lit/decorators.js';
 import {createRef, ref} from 'lit/directives/ref.js';

@@ -7,7 +7,7 @@
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\"",
     "clean": "rimraf dist/*",
-    "build:css": "tailwindcss -i src/base.css -o src/styles.css",
+    "build:css": "tailwindcss -i src/styles.css -o build/styles.css",
     "build:js": "node build.js",
     "build": "npm run clean && npm run build:css && npm run build:js",
     "release": "npm run build && npm publish"

@@ -4,4 +4,4 @@
 /bundle.js
 *.swp
 /dist/*
-src/styles.css
+/build/*
