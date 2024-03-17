@@ -29,3 +29,10 @@ Embed a val.town playground in your website.
 ### Events
 
 - `code-change`: Fired when the code changes. The event detail contains the new code.
+
+## Development
+
+```bash
+npm run dev # Start the development server
+npm run build # Build the web component
+```
