@@ -7,9 +7,7 @@
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\"",
     "clean": "rimraf dist/*",
-    "build:css": "tailwindcss -i src/styles.css -o build/styles.css",
-    "build:js": "node build.js",
-    "build": "npm run clean && npm run build:css && npm run build:js",
+    "build": "vite build",
     "serve": "serve",
     "watch": "chokidar --initial \"src/**/*\" -c \"npm run build\"",
     "release": "npm run build && npm publish"
@@ -29,8 +27,6 @@
   "devDependencies": {
     "@types/stringify-object": "^4.0.5",
     "chokidar-cli": "^3.0.0",
-    "esbuild": "^0.19.4",
-    "esbuild-plugin-lit-css": "^2.1.0",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.12",
     "rimraf": "^5.0.5",

@@ -1,5 +1,5 @@
-import {LitElement, css, html, nothing} from 'lit';
-import styles from '../build/styles.css' assert {type: 'css'};
+import {LitElement, unsafeCSS, css, html, nothing} from 'lit';
+import styles from './styles.css?inline';
 import manifest from '../package.json' assert {type: 'json'};
 import {customElement, property, state} from 'lit/decorators.js';
 import {createRef, ref} from 'lit/directives/ref.js';
@@ -90,7 +90,7 @@ const valtownLogo = html`<svg
 @customElement('vt-playground')
 export class Playground extends LitElement {
   static override styles = [
-    styles,
+    unsafeCSS(styles),
     css`
       :host {
         display: block;
@@ -179,24 +179,24 @@ export class Playground extends LitElement {
 
   override render() {
     return html`<div
-      class="transition-color group bg-white border-gray-300 overflow-hidden rounded border shadow-sm ring-4 ring-sky-500/0 [&:has(.cm-focused)]:border-gray-400 [&:has(.cm-focused)]:ring-sky-500/10"
+      class="transition-color group overflow-hidden rounded border border-gray-300 bg-white shadow-sm ring-4 ring-sky-500/0 [&:has(.cm-focused)]:border-gray-400 [&:has(.cm-focused)]:ring-sky-500/10"
     >
       <div class="divide-y divide-gray-300">
         <div
-          class="text-gray-600 flex w-full select-none flex-row justify-between gap-x-1 space-y-0 px-2 py-1"
+          class="flex w-full select-none flex-row justify-between gap-x-1 space-y-0 px-2 py-1 text-gray-600"
         >
           <div class="flex items-center justify-start gap-x-1">
             <a href="https://val.town" target="_blank">${valtownLogo}</a>
           </div>
           <div class="flex gap-x-1 py-1">
             <button
-              class="group bg-white text-gray-500 border-gray-300 inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border p-1.5 outline-0 transition-shadow hover:bg-gray-50 hover:border-gray-400 disabled:text-gray-400 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer"
+              class="group inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border border-gray-300 bg-white p-1.5 text-gray-500 outline-0 transition-shadow hover:border-gray-400 hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer disabled:text-gray-400"
               @click=${() => this.save()}
             >
               Save
             </button>
             <button
-              class="group text-white bg-blue-500 border-blue-500 inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border p-1.5 outline-0 transition-shadow hover:bg-blue-600 hover:border-blue-600 disabled:text-gray-400 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer"
+              class="group inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border border-blue-500 bg-blue-500 p-1.5 text-white outline-0 transition-shadow hover:border-blue-600 hover:bg-blue-600 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer disabled:text-gray-400"
               @click=${() => this.run()}
             >
               ${playIcon} Run
@@ -216,7 +216,7 @@ export class Playground extends LitElement {
 
 @customElement('vt-log')
 export class Log extends LitElement {
-  static override styles = [styles];
+  static override styles = [unsafeCSS(styles)];
 
   @property({type: Object})
   log: LogType | undefined;
@@ -255,7 +255,7 @@ export class Log extends LitElement {
             @click=${() => (this.open = !this.open)}
             fill="currentColor"
             aria-hidden="true"
-            class="text-blue-500 w-3 transition-transform group-open:rotate-90"
+            class="w-3 text-blue-500 transition-transform group-open:rotate-90"
           >
             <path
               fill-rule="evenodd"
