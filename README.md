@@ -11,13 +11,15 @@ Embed a val.town playground in your website.
 <html>
   <head>
     <title>vt-playground</title>
-    <script type="module" src="dist/vt-playground.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/vt-playground@latest/dist/vt-playground.js"></script>
   </head>
   <body>
     <vt-playground id="playground" code="console.log('hello world')"></vt-playground>
   </body>
 </html>
 ```
+
+See [@pomdtr/vt_playground_demo](https://www.val.town/v/pomdtr/vt_playground_demo) on val.town for a live demo.
 
 ## API
 
@@ -30,9 +32,10 @@ Embed a val.town playground in your website.
 
 - `code-change`: Fired when the code changes. The event detail contains the new code.
 
-## Development
+## Development Commands
 
 ```bash
 npm run dev # Start the development server
 npm run build # Build the web component
+npm run format # apply prettier to the code
 ```
