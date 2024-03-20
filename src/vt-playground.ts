@@ -1,33 +1,26 @@
-import {LitElement, unsafeCSS, css, html, nothing} from 'lit';
+import {LitElement, unsafeCSS, css, html} from 'lit';
 import styles from './styles.css?inline';
 import manifest from '../package.json' assert {type: 'json'};
 import {customElement, property, state} from 'lit/decorators.js';
 import {createRef, ref} from 'lit/directives/ref.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {join} from 'lit/directives/join.js';
+import {map} from 'lit/directives/map.js';
 import {basicSetup, EditorView} from 'codemirror';
 import {tsxLanguage} from '@codemirror/lang-javascript';
 import stringifyObject from 'stringify-object';
+import {nothing} from 'lit-html';
+import Table from 'easy-table';
 
 const API_URL = 'https://api.val.town';
-const SANDBOX_URL = `https://cdn.jsdelivr.net/npm/vt-playground@${manifest.version}/sandbox.ts`;
+const SANDBOX_URL = `https://esm.town/v/pomdtr/sandbox`;
 
-type LogType = {
+type Log = {
   level: string;
   args: unknown[];
 };
 
-type EvalResponse = {
-  json:
-    | {
-        ok: true;
-        logs: LogType[];
-      }
-    | {
-        ok: false;
-        error: string;
-      };
-};
+const SUPPORTED_LOG_LEVELS = ['table', 'log', 'info', 'warn', 'error'];
 
 const playIcon = html`<svg
   xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +103,10 @@ export class Playground extends LitElement {
   code = '';
 
   @state()
-  logs: LogType[] = [];
+  res: {
+    logs: Log[];
+    duration: number;
+  } | null = null;
 
   editorRef = createRef();
   view: EditorView | undefined;
@@ -124,8 +120,7 @@ export class Playground extends LitElement {
       const {code} = await resp.json();
       this.code = code;
     } else if (!this.code) {
-      this.code =
-        'import {capitalize} from "npm:lodash-es"\n\nconsole.log(capitalize("hello from val"))';
+      this.code = '';
     }
 
     const updateListener = EditorView.updateListener.of((update) => {
@@ -147,7 +142,6 @@ export class Playground extends LitElement {
   }
 
   async run() {
-    this.logs = [];
     this.requestUpdate();
     const resp = await fetch(API_URL + '/v1/eval', {
       method: 'POST',
@@ -158,23 +152,72 @@ export class Playground extends LitElement {
         args: [this.code]
       })
     });
-    const res = (await resp.json()) as EvalResponse;
-    if (res.json.ok) {
-      this.logs = res.json.logs;
-    } else {
-      this.logs = [
-        {
-          level: 'error',
-          args: [res.json.error]
-        }
-      ];
+    if (!resp.ok) {
+      throw new Error(await resp.text());
     }
+
+    const res = await resp.json();
+    if (res.json.ok) {
+      this.res = res.json;
+    } else {
+      throw new Error(res.json.error);
+    }
+
     // Why do we need to call requestUpdate here?
     this.requestUpdate();
   }
 
   async save() {
     window.open(`https://val.town/new?code=${encodeURIComponent(this.code)}`);
+  }
+
+  renderLogs() {
+    if (!this.res) {
+      return nothing;
+    }
+    const logs = this.res.logs.filter((log) =>
+      SUPPORTED_LOG_LEVELS.includes(log.level)
+    );
+    this.connectedCallback;
+    return map(logs, (log: Log) => {
+      if (log.level === 'table') {
+        if (!Array.isArray(log.args[0])) {
+          return html`<p class="text-red-700">Invalid table data</p>`;
+        }
+
+        const table = new Table();
+        const rows = log.args[0];
+        rows.forEach((row, idx) => {
+          let columns = Object.keys(row);
+          if (log.args.length > 1) {
+            if (!Array.isArray(log.args[1])) {
+              return html`<p class="text-red-700">Invalid table columns</p>`;
+            }
+
+            columns = log.args[1];
+          }
+          table.cell('(idx)', idx);
+          for (const column of columns) {
+            table.cell(column, row[column] ?? '');
+          }
+          table.newRow();
+        });
+
+        return html`<div>
+          ${join(table.toString().split('\n'), html`<br />`)}
+        </div>`;
+      }
+      return html`<p
+        class="${classMap({
+          '': true,
+          'text-blue-700': log.level === 'info',
+          'text-yellow-700': log.level === 'warn',
+          'text-red-700': log.level === 'error'
+        })}"
+      >
+        ${printLog(...log.args)}
+      </p>`;
+    });
   }
 
   override render() {
@@ -190,7 +233,7 @@ export class Playground extends LitElement {
           </div>
           <div class="flex gap-x-1 py-1">
             <button
-              class="group inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border border-gray-300 bg-white p-1.5 text-gray-500 outline-0 transition-shadow hover:border-gray-400 hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer disabled:text-gray-400"
+              class="group inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border border-gray-300 bg-white p-1.5 text-gray-500 outline-0 transition-shadow hover:border-gray-400 hover:bg-gray-100 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer disabled:text-gray-400"
               @click=${() => this.save()}
             >
               Save
@@ -204,9 +247,15 @@ export class Playground extends LitElement {
           </div>
         </div>
         <div class="relative" ${ref(this.editorRef)}></div>
-        ${this.logs.length > 0
-          ? html`<div>
-              ${this.logs.map((log) => html`<vt-log .log=${log}></vt-log>`)}
+        ${this.res
+          ? html`<div class="bg-blue-50 p-4 text-sm">
+              <p class="text-xs text-gray-400">
+                Duration: ${this.res.duration}ms
+              </p>
+              <h2 class="mb-2 pt-2 text-xs font-bold">Logs</h2>
+              <div class="text-wrap bg-white p-2 font-mono">
+                ${this.renderLogs()}
+              </div>
             </div>`
           : nothing}
       </div>
@@ -214,68 +263,7 @@ export class Playground extends LitElement {
   }
 }
 
-@customElement('vt-log')
-export class Log extends LitElement {
-  static override styles = [unsafeCSS(styles)];
-
-  @property({type: Object})
-  log: LogType | undefined;
-
-  @state()
-  open = false;
-
-  render() {
-    return html`<details
-      ${this.open ? 'open' : ''}
-      class="
-    ${classMap({
-        'bg-white hover:bg-blue-50 open:bg-blue-50':
-          this.log?.level !== 'error' && this.log?.level !== 'warn',
-        'bg-red-100 hover:bg-red-200 open:bg-red-200':
-          this.log?.level === 'error',
-        'bg-yellow-100 hover:bg-yellow-200 open:bg-yellow-200':
-          this.log?.level === 'warn'
-      })} group relative"
-    >
-      <summary
-        class="
-    [&amp;::-webkit-details-marker]:hidden
-    top-0 isolate grid w-full items-center gap-2 px-2 py-[4px]
-            text-left
-            font-mono
-            text-xs
-            transition-colors
-            "
-        style="grid-template-columns: 20px minmax(0px, 1fr)"
-      >
-        <div class="p-0.5">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            @click=${() => (this.open = !this.open)}
-            fill="currentColor"
-            aria-hidden="true"
-            class="w-3 text-blue-500 transition-transform group-open:rotate-90"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-              clip-rule="evenodd"
-            ></path>
-          </svg>
-        </div>
-        <div class="truncate">${log(...(this.log?.args || []))}</div>
-      </summary>
-      <div>
-        <div class="px-5 py-2 font-mono text-xs">
-          ${logPretty(...(this.log?.args || []))}
-        </div>
-      </div>
-    </details>`;
-  }
-}
-
-export function log(...args: unknown[]) {
+export function printLog(...args: unknown[]) {
   return args
     .map((arg) => {
       if (typeof arg === 'string') {
@@ -286,7 +274,7 @@ export function log(...args: unknown[]) {
     .join(' ');
 }
 
-export function logPretty(...args: unknown[]) {
+export function prettyPrintLog(...args: unknown[]) {
   return join(
     args.map((arg) => {
       if (typeof arg === 'string') {

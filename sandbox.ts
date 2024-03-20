@@ -11,67 +11,50 @@ type Log = {
 async function execute(
   code: string
 ): Promise<{ok: true; logs: Log[]} | {ok: false; error: string}> {
-  try {
-    const blob = new Blob([code], {
-      type: 'text/tsx'
-    });
-    const url = URL.createObjectURL(blob);
-    const markStackStart = crypto.randomUUID();
-    const markStackEnd = crypto.randomUUID();
-    function cleanStack(stack: string) {
-      let lines: string[] = [];
-      for (const line of stack.split('\n')) {
-        if (line.includes(markStackEnd)) break;
-        lines.push(line.replace(url, 'input.tsx'));
-        if (line.includes(markStackStart)) {
-          lines = [];
-        }
-      }
-      return lines.join('\n');
-    }
-    const logs: Log[] = [];
-    globalThis.console = new Proxy(console, {
-      get(target, key) {
-        const real = target[key];
-        if (typeof real === 'function' && typeof key === 'string') {
-          const fn = function (...args: any[]) {
-            logs.push({
-              level: key,
-              args
-            });
-            return real.call(this, ...args);
-          };
-          Object.defineProperty(fn, 'name', {
-            writable: true,
-            value: markStackStart
+  globalThis.console = new Proxy(console, {
+    get(target, key) {
+      const real = target[key];
+      if (typeof real === 'function' && typeof key === 'string') {
+        const fn = function (...args: any[]) {
+          logs.push({
+            level: key,
+            args
           });
-          return fn;
-        }
-      }
-    });
-    async function run() {
-      try {
-        await import(url);
-      } catch (e) {
-        logs.push({
-          level: 'error',
-          args: [e.message]
-        });
+          return real.call(this, ...args);
+        };
+        return fn;
       }
     }
-    Object.defineProperty(run, 'name', {
-      writable: true,
-      value: markStackEnd
-    });
+  });
+  const logs: Log[] = [];
+  async function run() {
+    try {
+      await import(url);
+    } catch (e) {
+      logs.push({
+        level: 'error',
+        args: [e.message]
+      });
+    }
+  }
+
+  const blob = new Blob([code], {
+    type: 'text/tsx'
+  });
+  const url = URL.createObjectURL(blob);
+
+  const start = performance.now();
+  try {
     await run();
-    URL.revokeObjectURL(url);
     return {
       ok: true,
+      duration: performance.now() - start,
       logs
     };
   } catch (error) {
     return {
       ok: false,
+      duration: (performance.now() = start),
       error: error.message
     };
   }
