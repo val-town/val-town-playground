@@ -143,48 +143,26 @@ export class Playground extends LitElement {
     if (!this.res) {
       return nothing;
     }
-    const logs = this.res.logs.filter((log) =>
-      SUPPORTED_LOG_LEVELS.includes(log.level)
+    const logs = this.res.logs
+      .filter((log) => SUPPORTED_LOG_LEVELS.includes(log.level))
+      .map((log) => ({
+        ...log,
+
+        text: printLog(log)
+      }));
+    return map(
+      logs,
+      (log) =>
+        html`<pre
+          class="${classMap({
+            'text-blue-500': log.level === 'debug',
+            'text-yellow-500': log.level === 'warn',
+            'text-red-500': log.level === 'error'
+          })}"
+        >
+${log.text}</pre
+        >`
     );
-    this.connectedCallback;
-    return map(logs, (log: Log) => {
-      if (log.level === 'table') {
-        if (!Array.isArray(log.args[0])) {
-          return html`<p class="text-red-700">Invalid table data</p>`;
-        }
-
-        const table = new Table();
-        const rows = log.args[0];
-        rows.forEach((row, idx) => {
-          let columns = Object.keys(row);
-          if (log.args.length > 1) {
-            if (!Array.isArray(log.args[1])) {
-              return html`<p class="text-red-700">Invalid table columns</p>`;
-            }
-
-            columns = log.args[1];
-          }
-          table.cell('(idx)', idx);
-          for (const column of columns) {
-            table.cell(column, row[column] ?? '');
-          }
-          table.newRow();
-        });
-
-        return html`<div>
-          ${join(table.toString().split('\n'), html`<br />`)}
-        </div>`;
-      }
-      return html`<p
-        class="${classMap({
-          'text-blue-700': log.level === 'info',
-          'text-yellow-700': log.level === 'warn',
-          'text-red-700': log.level === 'error'
-        })}"
-      >
-        ${printLog(...log.args)}
-      </p>`;
-    });
   }
 
   override render() {
@@ -196,7 +174,13 @@ export class Playground extends LitElement {
           class="flex select-none justify-between gap-x-1 space-y-0 px-2 py-1 text-gray-600"
         >
           <div class="flex items-center justify-start gap-x-1">
-            <a href="https://val.town" target="_blank">${valtownLogo}</a>
+            <a
+              href="${this.val
+                ? `https://val.town/v/${this.val}`
+                : 'https://val.town/'}"
+              target="_blank"
+              >${valtownLogo}</a
+            >
           </div>
           <div class="flex gap-x-1 py-1">
             <button
@@ -237,8 +221,34 @@ export class Playground extends LitElement {
   }
 }
 
-function printLog(...args: unknown[]) {
-  return args
+function printLog(log: Log) {
+  if (log.level === 'table') {
+    if (!Array.isArray(log.args[0])) {
+      throw new Error('Invalid table rows');
+    }
+
+    const table = new Table();
+    const rows = log.args[0];
+    rows.forEach((row, idx) => {
+      let columns = Object.keys(row);
+      if (log.args.length > 1) {
+        if (!Array.isArray(log.args[1])) {
+          throw new Error('Invalid table columns');
+        }
+
+        columns = log.args[1];
+      }
+      table.cell('(idx)', idx);
+      for (const column of columns) {
+        table.cell(column, row[column] ?? '');
+      }
+      table.newRow();
+    });
+
+    return table.toString();
+  }
+
+  return log.args
     .map((arg) => {
       if (typeof arg === 'string') {
         return arg;
