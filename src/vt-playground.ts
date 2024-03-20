@@ -157,7 +157,7 @@ export class Playground extends LitElement {
             'text-blue-500': log.level === 'debug',
             'text-yellow-500': log.level === 'warn',
             'text-red-500': log.level === 'error'
-          })}"
+          })} overflow-y-scroll"
         >
 ${log.text}</pre
         >`
@@ -170,7 +170,7 @@ ${log.text}</pre
         class="flex max-h-full flex-col justify-start divide-y divide-gray-300 overflow-hidden rounded border border-gray-300  bg-white shadow-sm"
       >
         <div
-          class="flex select-none justify-between gap-x-1 space-y-0 px-2 py-1 text-gray-600"
+          class="flex select-none justify-between gap-x-1 space-y-0 px-2 text-gray-600"
         >
           <div class="flex items-center justify-start gap-x-1">
             <a
@@ -183,7 +183,7 @@ ${log.text}</pre
           </div>
           <div class="flex gap-x-1 py-1">
             <button
-              class="group inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border border-gray-300 bg-white p-1.5 text-gray-500 outline-0 transition-shadow hover:border-gray-400 hover:bg-gray-100 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer disabled:text-gray-400"
+              class="inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border border-gray-300 bg-white p-1.5 text-sm text-gray-500 outline-0 transition-shadow hover:border-gray-400 hover:bg-gray-100 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer disabled:text-gray-400"
               @click=${() => this.save()}
             >
               Save
@@ -196,7 +196,7 @@ ${log.text}</pre
                 'text-white': !this.isRunning,
                 'bg-blue-500': !this.isRunning,
                 'hover:bg-blue-600': !this.isRunning
-              })} group inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border border-blue-500 p-1.5 outline-0 transition-shadow hover:border-blue-600  focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer disabled:text-gray-400"
+              })} inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border border-blue-500 p-1.5 text-sm outline-0 transition-shadow hover:border-blue-600  focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer disabled:text-gray-400"
               @click=${() => this.run()}
             >
               ${this.isRunning ? loadingIcon : playIcon} Run
@@ -289,8 +289,8 @@ const playIcon = html`<svg
 </svg>`;
 
 const valtownLogo = html`<svg
-  class="h-7"
-  viewBox="30 30 540 177"
+  class="h-3"
+  viewBox="80 80 440 77"
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
 >
