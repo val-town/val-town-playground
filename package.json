@@ -1,7 +1,7 @@
 {
   "name": "vt-playground",
   "type": "module",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "author": "Achille Lacoin",
   "description": "A playground component for Val Town",
   "scripts": {
