@@ -10,6 +10,10 @@
   }
 }
 
+.cm-editor {
+  -webkit-font-smoothing: antialiased;
+}
+
 .tok-content {
   @apply text-gray-500;
 }
@@ -131,6 +135,7 @@
   min-width: 20px;
 }
 
-.cm-scroller {
-  @apply py-2;
+.cm-editor .cm-scroller {
+  font-size: 13px;
+  @apply py-2 font-mono !important;
 }

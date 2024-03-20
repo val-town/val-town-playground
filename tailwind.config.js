@@ -1,9 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["src/**/*.ts"],
+  content: ['src/**/*.ts'],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['IBM Plex Sans', '-apple-system', 'sans-serif'],
+        mono: ['Menlo', 'Consolas', 'monospace']
+      }
+    }
   },
-  plugins: [],
-}
-
+  plugins: []
+};
