@@ -12,7 +12,8 @@
   },
   "license": "MIT",
   "files": [
-    "dist"
+    "dist",
+    "sandbox.ts"
   ],
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.2",
