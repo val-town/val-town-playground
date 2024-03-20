@@ -42,6 +42,9 @@ export class Playground extends LitElement {
   @property({type: String})
   val = '';
 
+  @property({type: Boolean})
+  disabled = false;
+
   @property({type: String})
   code = '';
 
@@ -107,6 +110,10 @@ export class Playground extends LitElement {
   }
 
   async run() {
+    if (this.disabled) {
+      console.warn('Playground is disabled');
+      return;
+    }
     this.requestUpdate();
     this.isRunning = true;
     const resp = await fetch(API_URL + '/v1/eval', {
@@ -188,19 +195,21 @@ ${log.text}</pre
             >
               Save
             </button>
-            <button
-              class="${classMap({
-                'text-blue-900': this.isRunning,
-                'bg-blue-200': this.isRunning,
-                'hover:bg-gray-200': this.isRunning,
-                'text-white': !this.isRunning,
-                'bg-blue-500': !this.isRunning,
-                'hover:bg-blue-600': !this.isRunning
-              })} inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border border-blue-500 p-1.5 text-sm outline-0 transition-shadow hover:border-blue-600  focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer disabled:text-gray-400"
-              @click=${() => this.run()}
-            >
-              ${this.isRunning ? loadingIcon : playIcon} Run
-            </button>
+            ${this.disabled
+              ? nothing
+              : html`<button
+                  class="${classMap({
+                    'text-blue-900': this.isRunning,
+                    'bg-blue-200': this.isRunning,
+                    'hover:bg-gray-200': this.isRunning,
+                    'text-white': !this.isRunning,
+                    'bg-blue-500': !this.isRunning,
+                    'hover:bg-blue-600': !this.isRunning
+                  })} inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border border-blue-500 p-1.5 text-sm outline-0 transition-shadow hover:border-blue-600  focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer disabled:text-gray-400"
+                  @click=${() => this.run()}
+                >
+                  ${this.isRunning ? loadingIcon : playIcon} Run
+                </button>`}
           </div>
         </div>
         <div ${ref(this.editorRef)}></div>
