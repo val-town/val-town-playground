@@ -9,3 +9,128 @@
       sans-serif;
   }
 }
+
+.tok-content {
+  @apply text-gray-500;
+}
+.tok-meta {
+  @apply text-blue-700;
+}
+.tok-link {
+  @apply underline;
+}
+.tok-heading {
+  @apply font-bold text-blue-900 underline;
+}
+.tok-emphasis {
+  @apply italic;
+}
+.tok-strong {
+  @apply font-bold;
+}
+
+.tok-atom,
+.tok-bool,
+.tok-url,
+.tok-contentSeparator,
+.tok-labelName,
+.tok-monospace {
+  @apply text-blue-700;
+}
+
+.tok-literal,
+.tok-inserted {
+  @apply text-blue-900;
+}
+
+.tok-string,
+.tok-string2,
+/** numbers */
+.tok-number,
+.tok-deleted {
+  @apply text-green-700;
+}
+
+.tok-regexp,
+.tok-escape,
+.tok-special {
+  @apply text-green-700;
+}
+
+/** keywords */
+.ts-kind-keyword,
+.tok-keyword {
+  @apply text-rose-500;
+}
+
+.tok-variableName.tok-definition {
+  @apply text-gray-800;
+}
+
+.tok-typeName,
+.ts-kind-functionName {
+  @apply text-blue-700;
+}
+
+/** members, properties, keys */
+.tok-propertyName,
+.ts-kind-localName,
+.tok-variableName {
+  @apply text-blue-900;
+}
+
+.ts-kind-parameterName {
+  @apply font-mono text-blue-900;
+}
+
+.tok-punctuation {
+  @apply text-gray-600;
+}
+
+/** comments */
+.tok-comment {
+  @apply text-gray-400;
+}
+
+.tok-invalid {
+  @apply text-red-700;
+}
+
+.cm-gutters {
+  @apply !border-gray-200 !bg-slate-50;
+  @apply transition-all;
+  @apply font-mono;
+  @apply sticky h-full shrink-0;
+  line-height: 1.1rem;
+  font-size: 0.7rem;
+  padding-left: 5px;
+  background: white;
+}
+
+.cm-editor {
+  @apply font-mono;
+}
+
+.cm-editor.cm-focused .cm-gutterElement.cm-activeLineGutter {
+  color: theme('colors.gray.600') !important;
+  background-color: initial !important;
+}
+
+.cm-activeLine {
+  background-color: initial !important;
+}
+
+.cm-editor .cm-gutter {
+  @apply h-full shrink-0;
+}
+
+.cm-editor .cm-gutterElement {
+  color: theme('colors.gray.400') !important;
+  padding: 0 5px !important;
+  text-align: right !important;
+  min-width: 20px;
+}
+
+.cm-scroller {
+  @apply py-2;
+}

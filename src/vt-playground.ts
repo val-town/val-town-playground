@@ -7,9 +7,11 @@ import {classMap} from 'lit/directives/class-map.js';
 import {map} from 'lit/directives/map.js';
 import {basicSetup, EditorView} from 'codemirror';
 import {tsxLanguage} from '@codemirror/lang-javascript';
+import {classHighlighter} from '@lezer/highlight';
 import stringifyObject from 'stringify-object';
 import {nothing} from 'lit-html';
 import Table from 'easy-table';
+import {syntaxHighlighting} from '@codemirror/language';
 
 const API_URL = 'https://api.val.town';
 // const SANDBOX_URL = `https://esm.town/v/pomdtr/sandbox`;
@@ -104,7 +106,12 @@ export class Playground extends LitElement {
 
     this.view = new EditorView({
       doc: this.code,
-      extensions: [basicSetup, tsxLanguage.extension, updateListener],
+      extensions: [
+        syntaxHighlighting(classHighlighter),
+        basicSetup,
+        tsxLanguage.extension,
+        updateListener
+      ],
       parent: this.editorRef.value!
     });
   }
@@ -177,7 +184,7 @@ ${log.text}</pre
         class="flex max-h-full flex-col justify-start divide-y divide-gray-300 overflow-hidden rounded border border-gray-300  bg-white shadow-sm"
       >
         <div
-          class="flex select-none justify-between gap-x-1 space-y-0 px-2 text-gray-600"
+          class="flex select-none justify-between gap-x-1 space-y-0 py-1 pl-4 pr-2 text-gray-600"
         >
           <div class="flex items-center justify-start gap-x-1">
             <a
@@ -205,7 +212,7 @@ ${log.text}</pre
                     'text-white': !this.isRunning,
                     'bg-blue-500': !this.isRunning,
                     'hover:bg-blue-600': !this.isRunning
-                  })} inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border border-blue-500 p-1.5 text-sm outline-0 transition-shadow hover:border-blue-600  focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer disabled:text-gray-400"
+                  })} inline-flex h-min select-none items-center justify-center gap-x-1 whitespace-nowrap rounded border border-blue-500 px-2 py-1.5 text-sm font-semibold outline-0 transition-shadow hover:border-blue-600  focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 enabled:cursor-pointer disabled:text-gray-400"
                   @click=${() => this.run()}
                 >
                   ${this.isRunning ? loadingIcon : playIcon} Run
