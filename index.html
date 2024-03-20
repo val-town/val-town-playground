@@ -4,7 +4,27 @@
     <title>vt-playground</title>
     <script type="module" src="src/vt-playground.ts"></script>
   </head>
-  <body>
-    <vt-playground val="pomdtr/console" id="playground"></vt-playground>
+  <body
+    style="
+      box-sizing: border-box;
+      height: 100vh;
+      margin: 0;
+      padding: 1em;
+      row-gap: 1em;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    "
+  >
+    <vt-playground
+      style="flex-grow: 1"
+      val="pomdtr/console"
+      id="playground"
+    ></vt-playground>
+    <vt-playground
+      style="flex-grow: 1"
+      code="console.log('Hello, World!')"
+      id="playground"
+    ></vt-playground>
   </body>
 </html>
