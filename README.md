@@ -11,7 +11,7 @@ Embed a val.town playground in your website.
 <html>
   <head>
     <title>vt-playground</title>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/vt-playground@latest/dist/vt-playground.js"></script>
+    <script type="module" src="https://raw.esm.sh/vt-playground@latest/dist/vt-playground.js"></script>
   </head>
   <body>
     <vt-playground id="playground" code="console.log('hello world')"></vt-playground>
