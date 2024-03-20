@@ -4,7 +4,6 @@ import manifest from '../package.json' assert {type: 'json'};
 import {customElement, property, state} from 'lit/decorators.js';
 import {createRef, ref} from 'lit/directives/ref.js';
 import {classMap} from 'lit/directives/class-map.js';
-import {join} from 'lit/directives/join.js';
 import {map} from 'lit/directives/map.js';
 import {basicSetup, EditorView} from 'codemirror';
 import {tsxLanguage} from '@codemirror/lang-javascript';
