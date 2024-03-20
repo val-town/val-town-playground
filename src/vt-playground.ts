@@ -157,7 +157,7 @@ export class Playground extends LitElement {
             'text-blue-500': log.level === 'debug',
             'text-yellow-500': log.level === 'warn',
             'text-red-500': log.level === 'error'
-          })} overflow-y-scroll"
+          })} max-h-64 overflow-scroll overflow-y-scroll"
         >
 ${log.text}</pre
         >`
