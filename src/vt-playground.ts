@@ -13,7 +13,8 @@ import {nothing} from 'lit-html';
 import Table from 'easy-table';
 
 const API_URL = 'https://api.val.town';
-const SANDBOX_URL = `https://esm.town/v/pomdtr/sandbox`;
+// const SANDBOX_URL = `https://esm.town/v/pomdtr/sandbox`;
+const SANDBOX_URL = `https://raw.esm.sh/vt-playground@${manifest.version}/sandbox.ts`;
 
 type Log = {
   level: string;
