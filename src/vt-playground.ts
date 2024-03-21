@@ -47,6 +47,9 @@ export class Playground extends LitElement {
   @property({type: Boolean})
   disabled = false;
 
+  @property({type: Boolean})
+  readonly = false;
+
   @property({type: String})
   code = '';
 
@@ -104,14 +107,20 @@ export class Playground extends LitElement {
       );
     });
 
+    const extensions = [
+      syntaxHighlighting(classHighlighter),
+      basicSetup,
+      tsxLanguage.extension,
+      updateListener
+    ];
+
+    if (this.readonly) {
+      extensions.push(EditorView.editable.of(false));
+    }
+
     this.view = new EditorView({
       doc: this.code,
-      extensions: [
-        syntaxHighlighting(classHighlighter),
-        basicSetup,
-        tsxLanguage.extension,
-        updateListener
-      ],
+      extensions,
       parent: this.editorRef.value!
     });
   }
