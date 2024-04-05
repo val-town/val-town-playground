@@ -12,23 +12,29 @@
 
 .cm-editor {
   -webkit-font-smoothing: antialiased;
+  @apply bg-gray-50;
 }
 
 .tok-content {
   @apply text-gray-500;
 }
+
 .tok-meta {
   @apply text-blue-700;
 }
+
 .tok-link {
   @apply underline;
 }
+
 .tok-heading {
   @apply font-bold text-blue-900 underline;
 }
+
 .tok-emphasis {
   @apply italic;
 }
+
 .tok-strong {
   @apply font-bold;
 }

@@ -30,13 +30,13 @@ export class Playground extends LitElement {
     unsafeCSS(styles),
     css`
       :host {
+        all: initial;
         display: block;
         overflow: hidden;
       }
 
       .cm-editor {
         max-height: 80vh;
-        background-color: rgb(249 250 251);
       }
     `
   ];
