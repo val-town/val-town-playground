@@ -14,7 +14,6 @@ import Table from 'easy-table';
 import {syntaxHighlighting} from '@codemirror/language';
 
 const API_URL = 'https://api.val.town';
-// const SANDBOX_URL = `https://esm.town/v/pomdtr/sandbox`;
 const SANDBOX_URL = `https://raw.esm.sh/vt-playground@${manifest.version}/sandbox.ts`;
 
 type Log = {
@@ -23,6 +22,13 @@ type Log = {
 };
 
 const SUPPORTED_LOG_LEVELS = ['table', 'log', 'info', 'warn', 'error'];
+
+// Font needs to be included in the root document
+const link = document.createElement('link');
+link.rel = 'stylesheet';
+link.href =
+  'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap';
+document.head.appendChild(link);
 
 @customElement('vt-playground')
 export class Playground extends LitElement {
@@ -33,6 +39,10 @@ export class Playground extends LitElement {
         all: initial;
         display: block;
         overflow: hidden;
+      }
+
+      button {
+        font-family: 'IBM Plex Sans', sans-serif;
       }
 
       .cm-editor {
