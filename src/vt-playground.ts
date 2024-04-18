@@ -203,7 +203,7 @@ ${log.text}</pre
         class="flex max-h-full flex-col justify-start divide-y divide-gray-300 overflow-hidden rounded border border-gray-300  bg-white shadow-sm"
       >
         <div
-          class="flex select-none justify-between gap-x-1 space-y-0 py-1 pl-4 pr-2 text-gray-600"
+          class="flex select-none justify-between gap-x-1 space-y-0 py-1 pl-2 pr-2 text-gray-600"
         >
           <div class="flex items-center justify-start gap-x-1">
             <a
@@ -324,10 +324,10 @@ const playIcon = html`<svg
 </svg>`;
 
 const valtownLogo = html`<svg
-  class="h-3"
-  viewBox="80 80 440 77"
-  fill="none"
   xmlns="http://www.w3.org/2000/svg"
+  class="h-9"
+  viewBox="0 0 600 237"
+  fill="none"
 >
   <rect width="600" height="237" fill="white" />
   <g clip-path="url(#clip0_1045_720)">
@@ -363,4 +363,4 @@ const valtownLogo = html`<svg
       <rect width="442" height="79" fill="white" transform="translate(79 79)" />
     </clipPath>
   </defs>
-</svg> `;
+</svg>`;
