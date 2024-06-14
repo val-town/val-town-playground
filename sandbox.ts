@@ -54,7 +54,7 @@ async function execute(
   } catch (error) {
     return {
       ok: false,
-      duration: (performance.now() = start),
+      duration: performance.now() - start,
       error: error.message
     };
   }
